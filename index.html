@@ -3,61 +3,146 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>見積 栄光重機</title>
 
-<!-- ホーム画面のアイコンと名前。ここはこちらで自由に決められる -->
-<link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
-<link rel="apple-touch-icon" href="icon-180.png">
-<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
-<link rel="icon" type="image/png" sizes="180x180" href="icon-180.png">
+<!-- ============================================================
+     栄光見積 － 入口ページ
+     有限会社栄光重機
+
+     【なぜこのページが要るか】
+     ホーム画面のアイコンの絵と名前は、iPhoneが
+     「ホーム画面に追加」した時点で見ていたページから読む。
+     Googleのアプリ画面は中身をこちらで決められないので、
+     アイコンを持たせるための入口をここに置いている。
+
+     【なぜ画面を埋め込まないか】
+     iPhoneのSafariは「クロスサイトトラッキングを防ぐ」が
+     標準でONになっている。別サイトの画面を枠の中に埋め込むと
+     Cookieが送られず、Googleが 401 エラーを返す（実機で確認済み）。
+     埋め込みではなく、普通の移動にすればCookieは通る。
+     ============================================================ -->
+
+<title>見積 栄光重機</title>
 <meta name="apple-mobile-web-app-title" content="見積 栄光重機">
-<meta name="application-name" content="見積 栄光重機">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#007C47">
+<link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
 <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1B6B3A">
 
 <style>
-  html, body { margin:0; padding:0; height:100%; background:#007C47; overscroll-behavior:none; }
-  iframe { display:block; width:100%; height:100%; border:0; }
-  #fallback {
-    display:none; padding:28px 22px; color:#fff; font-size:16px; line-height:1.9;
-    font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Noto Sans JP",sans-serif;
+  :root{
+    --green:#1B6B3A;
+    --green-dark:#14512C;
+    --line:rgba(255,255,255,.25);
   }
-  #fallback a {
-    display:block; margin-top:18px; padding:16px; background:#fff; color:#007C47;
-    border-radius:10px; text-align:center; font-weight:700; text-decoration:none;
+  *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html,body{ height:100%; margin:0; }
+  body{
+    background:var(--green);
+    color:#fff;
+    font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
+  }
+
+  /* 画面ぜんぶがボタン。どこを押しても見積画面へ行く。 */
+  a.open{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    min-height:100%;
+    padding:24px calc(24px + env(safe-area-inset-right)) calc(24px + env(safe-area-inset-bottom)) calc(24px + env(safe-area-inset-left));
+    text-decoration:none;
+    color:inherit;
+    transition:background .12s;
+  }
+  a.open:active{ background:var(--green-dark); }
+
+  .icon{
+    width:112px; height:112px;
+    border-radius:26px;
+    background:#fff;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 8px 24px rgba(0,0,0,.25);
+  }
+  .icon img{ width:112px; height:112px; border-radius:26px; display:block; }
+
+  h1{
+    margin:22px 0 6px;
+    font-size:30px;
+    font-weight:700;
+    letter-spacing:.06em;
+  }
+  .sub{
+    margin:0 0 34px;
+    font-size:14px;
+    opacity:.85;
+  }
+
+  .tap{
+    border:2px solid var(--line);
+    border-radius:999px;
+    padding:15px 34px;
+    font-size:18px;
+    font-weight:700;
+  }
+  .hint{
+    margin-top:18px;
+    font-size:13px;
+    opacity:.75;
+    line-height:1.7;
+    text-align:center;
+  }
+
+  .note{
+    position:fixed;
+    left:0; right:0;
+    bottom:calc(14px + env(safe-area-inset-bottom));
+    text-align:center;
+    font-size:11px;
+    opacity:.5;
   }
 </style>
 </head>
 <body>
 
-<!-- 見積の画面をそのまま表示する -->
-<iframe id="app"
-        src="https://script.google.com/macros/s/AKfycbyo_cFu6VH3Avq9aYEGuvZyJOLjjk8JyYQ1rMmDq4ByQjhJn4OUSfu2nr320g2jHJzHwg/exec?page=quick"
-        allow="clipboard-write"></iframe>
+<!-- 見積画面のURL。作り直したときは、この href だけ差し替える。 -->
+<a class="open" id="go"
+   href="https://script.google.com/macros/s/AKfycbyo_cFu6VH3Avq9aYEGuvZyJOLjjk8JyYQ1rMmDq4ByQjhJn4OUSfu2nr320g2jHJzHwg/exec?page=quick">
 
-<!-- 埋め込みが表示できなかったときの逃げ道 -->
-<div id="fallback">
-  画面を読み込めませんでした。<br>
-  下のボタンから直接開いてください。
-  <a href="https://script.google.com/macros/s/AKfycbyo_cFu6VH3Avq9aYEGuvZyJOLjjk8JyYQ1rMmDq4ByQjhJn4OUSfu2nr320g2jHJzHwg/exec?page=quick">
-    見積の画面を開く
-  </a>
-</div>
+  <span class="icon"><img src="icon-180.png" alt="栄光見積"></span>
+
+  <h1>栄光見積</h1>
+  <p class="sub">有限会社栄光重機</p>
+
+  <span class="tap">画面をタップしてひらく</span>
+
+  <p class="hint">
+    はじめてこの画面を見たときは<br>
+    共有ボタン → ホーム画面に追加
+  </p>
+
+</a>
+
+<p class="note">見積作成 / 有限会社栄光重機</p>
 
 <script>
-// 5秒たっても中身が出ないときだけ、逃げ道を出す
-setTimeout(function () {
-  var f = document.getElementById('app');
-  var ok = false;
-  try { ok = !!(f.contentWindow && f.contentWindow.length >= 0); } catch (e) { ok = true; }
-  if (!ok) {
-    f.style.display = 'none';
-    document.getElementById('fallback').style.display = 'block';
-  }
-}, 5000);
+  // ホーム画面のアイコンから開いたときだけ、自動で見積画面へ進む。
+  // Safariで普通に開いたとき（＝ホーム画面に追加しようとしているとき）は
+  // 自動で進まない。追加する前にページが逃げてしまわないようにするため。
+  (function () {
+    try {
+      var standalone = (window.navigator.standalone === true) ||
+        (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+      if (standalone) {
+        var url = document.getElementById('go').href;
+        // すこし待ってから進める。画面が一瞬で消えると
+        // 「押したのに反応していない」ように見えるため。
+        setTimeout(function () { window.location.replace(url); }, 500);
+      }
+    } catch (e) {
+      // 判定できない端末でも、タップすれば必ず開ける。何もしない。
+    }
+  })();
 </script>
+
 </body>
 </html>
