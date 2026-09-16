@@ -3,22 +3,32 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-store">
 
 <!-- ============================================================
      栄光見積 － 入口ページ
      有限会社栄光重機
 
-     【なぜこのページが要るか】
-     ホーム画面のアイコンの絵と名前は、iPhoneが
-     「ホーム画面に追加」した時点で見ていたページから読む。
-     Googleのアプリ画面は中身をこちらで決められないので、
-     アイコンを持たせるための入口をここに置いている。
+     【このページの役目】
+     ホーム画面のアイコンの絵と名前を持たせるためのページ。
+     iPhoneは「ホーム画面に追加」した時点のページから絵と名前を読むので、
+     アイコンを持たせるにはこのページが要る。
+
+     【ふだんの動き】
+     アイコンをタップ → このページが一瞬出て → そのまま見積画面へ自動で進む。
+     待たせないよう、すぐに飛ばしている。
+
+     【ホーム画面に追加し直したいとき】
+     住所のうしろに ?setup を付けて開くと、ここで止まる。
+       https://anakagawaeikou-eng.github.io/eikou-mitsumori/?setup
+     止まった状態で「共有 → ホーム画面に追加」すれば、
+     この絵と名前でアイコンが作られる。
 
      【なぜ画面を埋め込まないか】
-     iPhoneのSafariは「クロスサイトトラッキングを防ぐ」が
-     標準でONになっている。別サイトの画面を枠の中に埋め込むと
-     Cookieが送られず、Googleが 401 エラーを返す（実機で確認済み）。
-     埋め込みではなく、普通の移動にすればCookieは通る。
+     iPhoneのSafariは「クロスサイトトラッキングを防ぐ」が標準でON。
+     別サイトの画面を枠の中に埋め込むとCookieが送られず、
+     Googleが 401 エラーを返す（実機で確認済み）。
+     埋め込みではなく普通の移動にすれば、Cookieは通る。
      ============================================================ -->
 
 <title>見積 栄光重機</title>
@@ -42,7 +52,7 @@
     font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;
   }
 
-  /* 画面ぜんぶがボタン。どこを押しても見積画面へ行く。 */
+  /* 画面ぜんぶがボタン。自動で進まなかったときも、どこを押せば開く。 */
   a.open{
     display:flex;
     flex-direction:column;
@@ -56,27 +66,26 @@
   }
   a.open:active{ background:var(--green-dark); }
 
-  .icon{
-    width:112px; height:112px;
-    border-radius:26px;
-    background:#fff;
-    display:flex; align-items:center; justify-content:center;
-    box-shadow:0 8px 24px rgba(0,0,0,.25);
-  }
-  .icon img{ width:112px; height:112px; border-radius:26px; display:block; }
+  .icon img{ width:112px; height:112px; border-radius:26px; display:block; box-shadow:0 8px 24px rgba(0,0,0,.25); }
 
-  h1{
-    margin:22px 0 6px;
-    font-size:30px;
-    font-weight:700;
-    letter-spacing:.06em;
-  }
-  .sub{
-    margin:0 0 34px;
-    font-size:14px;
-    opacity:.85;
-  }
+  h1{ margin:22px 0 6px; font-size:30px; font-weight:700; letter-spacing:.06em; }
+  .sub{ margin:0 0 30px; font-size:14px; opacity:.85; }
 
+  /* ひらいている最中の表示 */
+  .loading{
+    display:flex; align-items:center; gap:10px;
+    font-size:16px; font-weight:600; opacity:.9;
+  }
+  .spin{
+    width:18px; height:18px;
+    border:2px solid rgba(255,255,255,.35);
+    border-top-color:#fff;
+    border-radius:50%;
+    animation:sp .8s linear infinite;
+  }
+  @keyframes sp{ to{ transform:rotate(360deg); } }
+
+  /* 自動で進まないとき（?setup を付けたとき）に出す案内 */
   .tap{
     border:2px solid var(--line);
     border-radius:999px;
@@ -84,22 +93,9 @@
     font-size:18px;
     font-weight:700;
   }
-  .hint{
-    margin-top:18px;
-    font-size:13px;
-    opacity:.75;
-    line-height:1.7;
-    text-align:center;
-  }
+  .hint{ margin-top:18px; font-size:13px; opacity:.75; line-height:1.7; text-align:center; }
 
-  .note{
-    position:fixed;
-    left:0; right:0;
-    bottom:calc(14px + env(safe-area-inset-bottom));
-    text-align:center;
-    font-size:11px;
-    opacity:.5;
-  }
+  .hidden{ display:none !important; }
 </style>
 </head>
 <body>
@@ -113,35 +109,44 @@
   <h1>栄光見積</h1>
   <p class="sub">有限会社栄光重機</p>
 
-  <span class="tap">画面をタップしてひらく</span>
+  <!-- ふだんはこちらが出る -->
+  <span class="loading" id="loading"><span class="spin"></span>ひらいています…</span>
 
-  <p class="hint">
-    はじめてこの画面を見たときは<br>
+  <!-- ?setup を付けたときだけ出る -->
+  <span class="tap hidden" id="tap">画面をタップしてひらく</span>
+  <p class="hint hidden" id="hint">
+    この画面のまま<br>
     共有ボタン → ホーム画面に追加
   </p>
 
 </a>
 
-<p class="note">見積作成 / 有限会社栄光重機</p>
-
 <script>
-  // ホーム画面のアイコンから開いたときだけ、自動で見積画面へ進む。
-  // Safariで普通に開いたとき（＝ホーム画面に追加しようとしているとき）は
-  // 自動で進まない。追加する前にページが逃げてしまわないようにするため。
-  (function () {
-    try {
-      var standalone = (window.navigator.standalone === true) ||
-        (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
-      if (standalone) {
-        var url = document.getElementById('go').href;
-        // すこし待ってから進める。画面が一瞬で消えると
-        // 「押したのに反応していない」ように見えるため。
-        setTimeout(function () { window.location.replace(url); }, 500);
-      }
-    } catch (e) {
-      // 判定できない端末でも、タップすれば必ず開ける。何もしない。
-    }
-  })();
+(function () {
+  var a = document.getElementById('go');
+
+  // 住所に ?setup が付いているときは、ここで止まる。
+  // ホーム画面にアイコンを作り直すためのモード。
+  var setup = /[?&]setup(=|&|$)/.test(location.search);
+
+  if (setup) {
+    document.getElementById('loading').classList.add('hidden');
+    document.getElementById('tap').classList.remove('hidden');
+    document.getElementById('hint').classList.remove('hidden');
+    return;
+  }
+
+  // ふだんは、そのまま見積画面へ進む。
+  // replace を使うと履歴に残らないので、
+  // 見積画面で「戻る」を押してもこの画面には戻らない。
+  try {
+    location.replace(a.href);
+  } catch (e) {
+    // 万一進めなくても、画面のどこかを押せば開ける
+    document.getElementById('loading').classList.add('hidden');
+    document.getElementById('tap').classList.remove('hidden');
+  }
+})();
 </script>
 
 </body>
