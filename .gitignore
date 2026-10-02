@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+.clasprc.json
+*.pem
+*.p8
+*.key
+service-account*.json
+*-credentials.json
+.vercel/
+supabase/.temp/
+supabase/.branches/
